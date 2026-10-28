@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRoute, go } from './utils/useRoute.js';
-import DesktopGate from './components/DesktopGate.jsx';
 import GiftBox from './components/GiftBox.jsx';
 import Hub from './components/Hub.jsx';
 import Messages from './pages/Messages.jsx';
@@ -21,7 +20,7 @@ export default function App() {
 
   if (route === 'landing') {
     return (
-      <DesktopGate>
+      <>
         <div className="relative h-full overflow-hidden">
           <motion.div
             className="absolute inset-0"
@@ -46,13 +45,13 @@ export default function App() {
             <Hub />
           </motion.div>
         </div>
-      </DesktopGate>
+      </>
     );
   }
 
   if (route === 'hub') {
     return (
-      <DesktopGate>
+      <>
         <motion.div
           className="h-full"
           initial={{ opacity: 0 }}
@@ -61,13 +60,13 @@ export default function App() {
         >
           <Hub />
         </motion.div>
-      </DesktopGate>
+      </>
     );
   }
 
   const Page = PAGES[route];
   return (
-    <DesktopGate>
+    <>
       <motion.div
         className="min-h-full"
         initial={{ opacity: 0, y: 16 }}
@@ -76,6 +75,6 @@ export default function App() {
       >
         <Page />
       </motion.div>
-    </DesktopGate>
+    </>
   );
 }

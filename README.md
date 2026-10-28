@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # achaBday
 
-A one-night birthday site for Acha's 50th. Laptop only.
+A one-night birthday site for Acha's 50th. Works on laptop and phone.
 
 ## Running it
 
@@ -22,7 +21,7 @@ npm run preview
 
 | Screen | Route | What it is |
 |---|---|---|
-| Gift box | `#/` | Three clicks, the lid floats off, balloons, the page lifts into the hub |
+| Gift box | `#/` | Three taps, the lid floats off, balloons, the page lifts into the hub |
 | Hub | `#/hub` | Three icons: messages, the film, the gallery |
 | Video messages | `#/messages` | 38 clips in sections — Elu, Aniyara, friends, then the closing one |
 | Cinema | `#/cinema` | Mum's film, gift-wrapped, one click to open |
@@ -94,6 +93,20 @@ Two things worth knowing if you ever change it:
 Videos and photos sort naturally by number. One exception is hard-coded in
 `scripts/build-media.mjs`: `elu/20.1` plays *before* `elu/20`. If you add more
 numbered-with-a-decimal files, check `SORT_OVERRIDES`.
-=======
-# dadbday
->>>>>>> 74f618eed445d0afd98b9abae85bdb3424afbea1
+
+## On phones
+
+The site is responsive rather than desktop-only. Three things behave
+differently on a narrow screen, and they're worth knowing about if you change
+the layout later:
+
+- **One clip per row** instead of two. That's decided in JavaScript, not CSS,
+  because the row structure is also what the autoplay scrolling steps through —
+  a CSS-only change would leave the scrolling stepping two tiles at a time.
+- **The control bar is always visible.** On desktop it fades in on hover; a
+  finger produces no hover, so under `@media (hover: none)` it stays up. Without
+  that the controls would simply never appear on a phone.
+- **Autoplay can be refused.** iOS blocks a `play()` that isn't closely tied to
+  a tap, which would otherwise stall the chain on a tile that looks like it
+  should be playing. When that happens the play button comes back so one tap
+  resumes it.

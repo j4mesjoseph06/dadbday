@@ -1,4 +1,5 @@
 import { Fragment, useMemo, useRef, useState } from 'react';
+import { useNarrow } from '../utils/useNarrow.js';
 import media from '../data/generated/media.json';
 import { banners, loveNote, photoboothPicks } from '../data/content.js';
 import VideoPlayer from '../components/VideoPlayer.jsx';
@@ -28,11 +29,11 @@ function SectionRule() {
 const SPLITS = [[55, 45], [45, 55]];
 const TILTS = [[-1.0, 0.8], [0.9, -0.7]];
 
-function buildRows(items) {
+function buildRows(items, perRow) {
   const rows = [];
   let i = 0;
   while (i < items.length) {
-    if (items[i].solo || !items[i + 1] || items[i + 1].solo) {
+    if (perRow === 1 || items[i].solo || !items[i + 1] || items[i + 1].solo) {
       rows.push([items[i]]);
       i += 1;
     } else {
@@ -47,7 +48,7 @@ function buildRows(items) {
    at opposing angles rather than one tall column, so the banner stays a
    banner instead of becoming a wall. Which pictures appear is set in
    src/data/content.js. */
-function PhotoboothStrips() {
+function PhotoboothStrips({ narrow }) {
   const picked = photoboothPicks
     .map((id) => media.photobooth.find((p) => p.id === id))
     .filter(Boolean);
@@ -70,12 +71,14 @@ function PhotoboothStrips() {
   const shots = (picked.length ? picked : media.photobooth).slice(0, 5);
   if (!shots.length) return null;
 
+  const frame = narrow ? 92 : 148;
+
   const Strip = ({ items, tilt, className }) => (
     <div className={`relative ${className}`} style={{ transform: `rotate(${tilt}deg)` }}>
-      <div className="rounded-sm bg-gradient-to-b from-white to-cream p-2.5 pb-7 shadow-[0_16px_38px_rgba(0,0,0,0.5)]">
+      <div className={`rounded-sm bg-gradient-to-b from-white to-cream shadow-[0_16px_38px_rgba(0,0,0,0.5)] ${narrow ? 'p-1.5 pb-4' : 'p-2.5 pb-7'}`}>
         <div className="flex flex-col gap-2">
           {items.map((s) => (
-            <div key={s.id} className="overflow-hidden bg-ink" style={{ width: 148, aspectRatio: '1 / 1' }}>
+            <div key={s.id} className="overflow-hidden bg-ink" style={{ width: frame, aspectRatio: '1 / 1' }}>
               <img src={`${s.base}-900.webp`} alt="" loading="eager" className="h-full w-full object-cover" />
             </div>
           ))}
@@ -98,15 +101,16 @@ export default function Messages() {
   const [speed, setSpeed] = useState(1);
   const [muted, setMuted] = useState(false);
   const rowRefs = useRef({});
+  const narrow = useNarrow();
 
   const { order, rows, rowOf } = useMemo(() => {
     const items = media.messages;               // already in page order
     const order = items.map((m) => m.id);
-    const rows = buildRows(items);
+    const rows = buildRows(items, narrow ? 1 : 2);
     const rowOf = {};
     rows.forEach((row, ri) => row.forEach((it) => { rowOf[it.id] = ri; }));
     return { order, rows, rowOf };
-  }, []);
+  }, [narrow]);
 
   const advance = (fromId) => {
     const nextId = order[order.indexOf(fromId) + 1];
@@ -123,7 +127,10 @@ export default function Messages() {
   const renderTile = (item, idxInRow, rowIndex, width) => (
     <div
       key={item.id}
-      style={{ flexBasis: `${width}%`, transform: `rotate(${TILTS[rowIndex % 2][idxInRow] ?? 0}deg)` }}
+      style={{
+        flexBasis: narrow ? '100%' : `${width}%`,
+        transform: narrow ? 'none' : `rotate(${TILTS[rowIndex % 2][idxInRow] ?? 0}deg)`,
+      }}
       className="min-w-0"
     >
       <div className="wrap-calm tile-frame">
@@ -146,10 +153,10 @@ export default function Messages() {
       <BackButton />
 
       <PageBanner {...banners.messages}>
-        <PhotoboothStrips />
+        <PhotoboothStrips narrow={narrow} />
       </PageBanner>
 
-      <div className="mx-auto mt-16 flex max-w-[1500px] flex-col gap-12 px-10">
+      <div className="mx-auto mt-10 flex max-w-[1500px] flex-col gap-7 px-4 sm:mt-16 sm:gap-12 sm:px-10">
         {rows.map((row, ri) => {
           const split = SPLITS[ri % SPLITS.length];
           const solo = row.length === 1;
@@ -160,10 +167,10 @@ export default function Messages() {
               {newSection && <SectionRule />}
               <div
                 ref={(el) => { rowRefs.current[ri] = el; }}
-                className={`flex gap-8 ${solo ? 'justify-center' : ''}`}
+                className={`flex gap-4 sm:gap-8 ${solo ? 'justify-center' : ''}`}
               >
                 {solo
-                  ? renderTile(row[0], 0, ri, 66)
+                  ? renderTile(row[0], 0, ri, narrow ? 100 : 66)
                   : row.map((item, ii) => renderTile(item, ii, ri, split[ii]))}
               </div>
             </Fragment>
@@ -172,8 +179,8 @@ export default function Messages() {
       </div>
 
       {/* ── sign-off, as a letter ── */}
-      <div className="mx-auto mt-32 w-full max-w-xl px-10">
-        <div className="letter-paper rounded-[3px] px-14 py-16" style={{ transform: 'rotate(-1.2deg)' }}>
+      <div className="mx-auto mt-20 w-full max-w-xl px-4 sm:mt-32 sm:px-10">
+        <div className="letter-paper rounded-[3px] px-7 py-12 sm:px-14 sm:py-16" style={{ transform: 'rotate(-1.2deg)' }}>
           <p className="script relative z-10 text-center text-[30px] leading-snug text-[#3b2516]">
             {loveNote[0]}
           </p>

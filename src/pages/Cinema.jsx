@@ -14,8 +14,8 @@ const SWEEP = { duration: 1.6, ease: [0.33, 0, 0.12, 1] };
 
 function Marquee() {
   return (
-    <div className="relative z-40 mx-auto w-fit max-w-full px-4">
-      <div className="relative rounded-xl bg-burgundy px-14 py-6 shadow-[0_18px_44px_rgba(0,0,0,0.6)] ring-2 ring-gold/70">
+    <div className="relative z-40 mx-auto w-fit max-w-full px-3">
+      <div className="relative rounded-xl bg-burgundy px-6 py-4 shadow-[0_18px_44px_rgba(0,0,0,0.6)] ring-2 ring-gold/70 sm:px-14 sm:py-6">
         <h1 className="display text-center text-[clamp(34px,4.6vw,60px)] leading-none text-gold-warm">
           {banners.cinema.title}
         </h1>
@@ -121,7 +121,7 @@ export default function Cinema() {
   };
 
   return (
-    <div className="page-bg relative flex min-h-full flex-col overflow-hidden pb-16 pt-12">
+    <div className="page-bg relative flex min-h-dvh flex-col overflow-hidden pb-10 pt-6 sm:pb-16 sm:pt-12">
       <BackButton />
 
       {/* house lights down once the film rolls */}
@@ -135,9 +135,9 @@ export default function Cinema() {
       <Marquee />
 
       {/* ── the stage ── */}
-      <div className="relative mt-10 flex-1">
-        <div className="relative z-30 mx-auto w-full max-w-5xl px-6">
-          <div className="rounded-xl bg-ink/70 p-3 shadow-[0_26px_60px_rgba(0,0,0,0.6)] ring-1 ring-gold/40">
+      <div className="relative mt-6 flex-1 sm:mt-10">
+        <div className="relative z-30 mx-auto w-full max-w-5xl px-3 sm:px-6">
+          <div className="rounded-xl bg-ink/70 p-2 shadow-[0_26px_60px_rgba(0,0,0,0.6)] ring-1 ring-gold/40 sm:p-3">
             {!film ? (
               <div
                 className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gold/45 bg-burgundy/40 text-center"
@@ -176,11 +176,11 @@ export default function Cinema() {
               aria-label="Open the curtains"
             >
               <motion.span
-                className="script rounded-full border border-gold/60 bg-ink/70 px-9 py-3 text-[27px] text-gold-warm backdrop-blur"
+                className="script rounded-full border border-gold/60 bg-ink/70 px-6 py-2.5 text-center text-[20px] text-gold-warm backdrop-blur sm:px-9 sm:py-3 sm:text-[27px]"
                 animate={{ opacity: [0.7, 1, 0.7] }}
                 transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
               >
-                Click to open the curtains
+                Open the curtains
               </motion.span>
             </motion.button>
           )}

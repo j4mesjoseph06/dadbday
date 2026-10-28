@@ -49,6 +49,7 @@ export default function VideoPlayer({
   const [duration, setDuration] = useState(item.duration || 0);
   const [speedOpen, setSpeedOpen] = useState(false);
   const [scrubbing, setScrubbing] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   /* Parent decides who's live. Arm on first activation, pause when passed over. */
   useEffect(() => {
@@ -59,7 +60,13 @@ export default function VideoPlayer({
       if (!armed) setArmed(true);
       if (autoPlayOnActivate) {
         const p = v.play();
-        if (p && p.catch) p.catch(() => {});
+        if (p && p.catch) {
+          /* iOS will refuse a play() that isn't tied closely enough to a tap.
+             When that happens the chain would otherwise stop dead on a tile
+             that looks like it should be playing, so surface the play button
+             again and let them carry on with one tap. */
+          p.then(() => setBlocked(false)).catch(() => setBlocked(true));
+        }
       }
     } else if (!v.paused) {
       v.pause();
@@ -86,6 +93,7 @@ export default function VideoPlayer({
     }
     if (v.paused) {
       onRequestActive?.();
+      setBlocked(false);
       const p = v.play();
       if (p && p.catch) p.catch(() => {});
     } else {
@@ -108,9 +116,18 @@ export default function VideoPlayer({
 
   const fullscreen = () => {
     const el = wrapRef.current;
-    if (!el) return;
-    if (document.fullscreenElement) document.exitFullscreen();
-    else el.requestFullscreen?.();
+    const v = videoRef.current;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      return;
+    }
+    if (el?.requestFullscreen) {
+      el.requestFullscreen();
+    } else if (v?.webkitEnterFullscreen) {
+      /* iPhone Safari won't fullscreen an arbitrary element — only the video
+         itself, through this non-standard call. */
+      v.webkitEnterFullscreen();
+    }
   };
 
   const pct = duration > 0 ? (time / duration) * 1000 : 0;
@@ -190,7 +207,7 @@ export default function VideoPlayer({
       )}
 
       {/* Big centre button before anything has been watched */}
-      {!playing && !armed && !isAudio && (
+      {((!playing && !armed) || blocked) && !isAudio && (
         <button
           type="button"
           onClick={toggle}
@@ -212,7 +229,7 @@ export default function VideoPlayer({
 
       {/* Control bar */}
       <div
-        className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-2.5 pb-2 pt-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100"
+        className="controls absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/85 via-black/55 to-transparent px-2 pb-2 pt-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100 sm:gap-2 sm:px-2.5"
         style={playing || armed ? undefined : { opacity: undefined }}
       >
         <button
@@ -237,7 +254,7 @@ export default function VideoPlayer({
           type="button"
           onClick={() => seekBy(-10)}
           aria-label="Back 10 seconds"
-          className="shrink-0 px-1 text-cream hover:text-gold-warm"
+          className="hidden shrink-0 px-1 text-cream hover:text-gold-warm min-[380px]:block"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 3V1L4.5 3.5 8 6V4a4 4 0 1 1-4 4H2.5a5.5 5.5 0 1 0 5.5-5z" />
@@ -248,7 +265,7 @@ export default function VideoPlayer({
           type="button"
           onClick={() => seekBy(10)}
           aria-label="Forward 10 seconds"
-          className="shrink-0 px-1 text-cream hover:text-gold-warm"
+          className="hidden shrink-0 px-1 text-cream hover:text-gold-warm min-[380px]:block"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 3V1l3.5 2.5L8 6V4a4 4 0 1 0 4 4h1.5A5.5 5.5 0 1 1 8 3z" />
@@ -272,7 +289,7 @@ export default function VideoPlayer({
           }}
         />
 
-        <span className="shrink-0 font-mono text-[11px] tabular-nums text-cream/80">
+        <span className="hidden shrink-0 font-mono text-[11px] tabular-nums text-cream/80 min-[420px]:inline">
           {fmt(time)} / {fmt(duration)}
         </span>
 

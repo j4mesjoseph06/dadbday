@@ -232,3 +232,36 @@ body {
   0%, 100% { transform: scaleY(0.45); }
   50%      { transform: scaleY(1); }
 }
+
+/* ─── touch ───────────────────────────────────────────────────────────────
+   The control bar fades in on hover, which a finger never produces. On a
+   touch screen it would simply never appear, so there it stays up. */
+@media (hover: none) {
+  .controls {
+    opacity: 1 !important;
+  }
+}
+
+/* Comfortable tap targets on the control bar without bloating it on desktop. */
+@media (hover: none) and (max-width: 860px) {
+  .controls button {
+    min-width: 34px;
+    min-height: 34px;
+  }
+  .controls input[type='range'] {
+    height: 16px;
+  }
+}
+
+/* Nothing should ever scroll sideways on a phone. */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* The bulb runs either side of the marquee crowd it on a narrow screen. */
+@media (max-width: 640px) {
+  .page-bg {
+    background-size: 48px 48px, 48px 48px;
+  }
+}

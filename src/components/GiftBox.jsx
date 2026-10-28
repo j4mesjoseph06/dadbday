@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Balloons from './Balloons.jsx';
 
 const CLICKS_TO_OPEN = 3;
-const HINTS = ['Click the gift', 'Again…', 'One more!'];
+const HINTS = ['Open the gift', 'Again…', 'One more!'];
 
 /* The front door. Three clicks, the box wobbling harder each time, then the
    lid lifts away and the balloons come out. The float-up to the hub is handled
@@ -20,7 +20,7 @@ export default function GiftBox({ onOpen }) {
   };
 
   return (
-    <div className="page-bg relative flex h-full w-full items-center justify-center overflow-hidden">
+    <div className="page-bg relative flex h-dvh w-full items-center justify-center overflow-hidden">
       {/* faint gold confetti resting in the background */}
       <div
         aria-hidden
@@ -41,8 +41,8 @@ export default function GiftBox({ onOpen }) {
           type="button"
           onClick={handleClick}
           aria-label="Open the gift"
-          className="relative cursor-pointer border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none"
-          style={{ width: 390, height: 360 }}
+          className="relative w-[300px] cursor-pointer border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none sm:w-[390px]"
+          style={{ height: 360, maxWidth: '86vw' }}
           animate={
             opened
               ? { scale: 1, rotate: 0 }
