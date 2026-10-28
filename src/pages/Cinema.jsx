@@ -110,6 +110,7 @@ function CurtainPanel({ side, open }) {
 
 export default function Cinema() {
   const [open, setOpen] = useState(false);
+  const [swept, setSwept] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [muted, setMuted] = useState(false);
@@ -118,6 +119,12 @@ export default function Cinema() {
   const reveal = () => {
     if (open) return;
     setOpen(true);
+    /* While they're sweeping, the curtains have to be above the screen — that
+       is the whole effect. Once they're tied back they're just scenery, and
+       leaving them on top means they overlap the edges of the frame on any
+       viewport narrower than about 1680px, covering the fullscreen button and
+       clipping the picture. So they drop behind once the sweep is done. */
+    setTimeout(() => setSwept(true), SWEEP.duration * 1000 + 120);
   };
 
   return (
@@ -164,7 +171,11 @@ export default function Cinema() {
         </div>
 
         {/* curtains, drawn across everything until clicked */}
-        <div className={`absolute inset-0 z-40 ${open ? 'pointer-events-none' : ''}`}>
+        <div
+          className={`absolute inset-0 ${swept ? 'z-10' : 'z-40'} ${
+            open ? 'pointer-events-none' : ''
+          }`}
+        >
           <CurtainPanel side="left" open={open} />
           <CurtainPanel side="right" open={open} />
 
