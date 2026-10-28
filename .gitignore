@@ -1,0 +1,16 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Source media — the compressed copies in public/assets are what the site uses
+photos/
+videos/
+songs/
+ignore/
+*.zip
+
+# Built media. Served from Cloudflare R2, not from this repo - see DEPLOY.md.
+# It stays on disk for local development, but 225 MB has no business in git
+# and Vercel only needs the ~1 MB app.
+public/assets/

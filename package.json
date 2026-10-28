@@ -1,0 +1,29 @@
+{
+  "name": "achabday",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "media": "node scripts/build-media.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "media:local": "node scripts/build-media.mjs --local"
+  },
+  "dependencies": {
+    "@fontsource/caveat": "^5.2.5",
+    "@fontsource/dancing-script": "^5.2.5",
+    "@fontsource/lilita-one": "^5.2.5",
+    "@fontsource/nunito": "^5.2.5",
+    "framer-motion": "^11.18.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^4.7.0",
+    "sharp": "^0.34.4",
+    "tailwindcss": "^4.1.14",
+    "vite": "^5.4.21"
+  }
+}

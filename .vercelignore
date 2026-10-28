@@ -1,0 +1,13 @@
+# Vite copies everything under public/ into dist/, which would pull all 225 MB
+# of video into the Vercel deploy — the exact thing R2 exists to avoid.
+#
+# Deploying from Git already avoids this, because public/assets is gitignored
+# and never reaches the repo. This is the belt to that braces: it also covers
+# running `vercel` from this folder, where the local files would otherwise be
+# uploaded.
+public/assets/
+
+photos/
+videos/
+songs/
+ignore/
